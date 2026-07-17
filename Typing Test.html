@@ -5,7 +5,59 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Niven Teaches Typing For No Reason</title>
-        <link rel="stylesheet" href="./Typing Test_files/style.css">
+        <style>
+                * {
+    padding: 0;
+    margin: 0;
+    font-family: arial;
+}
+
+body {
+    text-align: center;
+    background-color: darkgreen;
+}
+
+h1 {
+    color: white;
+    font-size: 40px;
+    margin: 20px;
+}
+
+.correct {
+    color: green;
+}
+
+.incorrect {
+    color: red;
+}
+
+.untyped:first-letter {
+    text-decoration: underline;
+}
+
+#text {
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    padding: 60px;
+}
+
+span {
+    white-space: pre;
+}
+
+button {
+    margin: 20px;
+    padding: 10px;
+    font-size: 24px;
+    background-color: white;
+}
+
+#wpm {
+    font-size: 30px;
+}
+
+        </style>
     </head>
     <body>
 
@@ -17,8 +69,93 @@
             <span class="untyped"></span>
         </h2>
         <p id="wpm"></p>
-        <script src="./Typing Test_files/script.js.download"></script>
-    <script defer="" src="./Typing Test_files/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;3c035defe3da4d3caf8b0a246f6f5ea8&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+        <script>
+                let examples = [
+    'This is going to be an somewhat long sentence because I am extremely teaching hoe to type this.',
+    'This is the only short sentences',
+    'faehfioijdlkjvshbehufewgwe ivefnvknwreijf',
+    'lahf.jfblsdcjsljckblrihucoewnfliurew;ohfnjewlicnfrhw rn',
+    'ailuhnvigcowa;rkfwiloslaekglieofihguyi'
+];
+
+let correctArray = [];
+let incorrectArray = [];
+let untypedArray = [];
+let correctSpan = document.querySelector('.correct');
+let incorrectSpan = document.querySelector('.incorrect');
+let untypedSpan = document.querySelector('.untyped');
+let wpmEl = document.getElementById('wpm');
+
+let letterTyped = 0;
+let startTime;
+
+function startTest() {
+    resetTest();
+
+    document.onkeydown = typeTest;
+    startTime = new Date();
+    document.querySelector('button').disabled = true;
+    let textToType = examples[Math.floor(Math.random() * examples.length)];
+
+    untypedArray = textToType.split('');
+    untypedSpan.innerHTML = textToType;
+}
+
+function typeTest(event) {
+    if (event.key.length < 2) {
+        checkLetter(event);
+    } else if (event.key === 'Backspace' && incorrectArray.length > 0) {
+        untypedArray.unshift(incorrectArray.pop());
+    }
+    printToScreen();
+}
+
+function checkLetter(event) {
+    let letter = event.key;
+    if (event.shiftKey) {
+        letter = letter.toUpperCase();
+    }
+    if (letter === untypedArray[0] && incorrectArray.length === 0) {
+        correctArray.push(untypedArray.shift());
+        letterTyped++;
+        checkFinished();
+    } else {
+        incorrectArray.push(untypedArray.shift());
+    }
+}
+
+function printToScreen() {
+    correctSpan.innerHTML = correctArray.join('');
+
+    incorrectSpan.innerHTML = incorrectArray.join('');
+
+    untypedSpan.innerHTML = untypedArray.join('');
+
+    let timeElapsed = (new Date() - startTime) / 1000;
+    let wordsTyped = letterTyped / 4;
+    let wpm = Math.floor((wordsTyped / timeElapsed) * 60);
+    wpmEl.innerHTML = 'WPM: ' + wpm;
+}
+
+function checkFinished() {
+    if(untypedArray.length === 0 && incorrectArray.length === 0){
+        document.onkeydown = null;
+        document.querySelector("button").disabled = false;
+    }
+}
+
+function resetTest() {
+    letterTyped = 0;
+    correctArray = [];
+    incorrectArray = [];
+    untypedArray = [];
+    correctSpan.innerHTML = '';
+    incorrectSpan.innerHTML = '';
+    untypedSpan.innerHTML = '';
+    wpmEl.innerHTML = '';
+}
+
+        </script>
 
 
 </body></html>
